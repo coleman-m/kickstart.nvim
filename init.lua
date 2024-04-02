@@ -133,7 +133,7 @@ vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
 -- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
+vim.opt.timeoutlen = 500
 
 -- Configure how new splits should be opened
 vim.opt.splitright = true
@@ -204,6 +204,8 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+vim.lsp.set_log_level("debug")
+
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
@@ -254,9 +256,56 @@ require('lazy').setup({
         delete = { text = '_' },
         topdelete = { text = '‾' },
         changedelete = { text = '~' },
+        untracked = { text = '┆' },
       },
     },
   },
+
+  { -- Lua-Based Github Copilot
+    "zbirenbaum/copilot.lua",
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require('copilot').setup({
+        panel = {
+          enabled = true,
+          auto_refresh = true,
+          keymap = {
+            jump_prev = "[[",
+            jump_next = "]]",
+            accept = "<CR>",
+            refresh = "gr",
+            open = "<M-\\>"
+          },
+        },
+        suggestion = {
+          keymap = {
+            accept = "<M-l>",
+            accept_word = "<C-l>",
+            accept_line = "<C-L>",
+            next = "<M-]>",
+            prev = "<M-[>",
+            dismiss = "<C-]>",
+          },
+        },
+        filetypes = {
+          ["*"] = false,
+          lua = true,
+          python = true,
+          c = true,
+          fortran = true,
+        },
+        settings = {
+          advanced = {
+            listCount = 10,
+            inlineSuggestCount = 3,
+          },
+        },
+      })
+    end,
+  },
+
+  { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -568,10 +617,8 @@ require('lazy').setup({
         fortls = {
           cmd = {
             'fortls',
-            '--lowercase_intrisics',
-            '--hover_signature',
-            '--hover_language=fortran',
-            '--use_signature_help',
+            '--config',
+            '/home/coleman/.fortlsrc',
           },
         },
       }
