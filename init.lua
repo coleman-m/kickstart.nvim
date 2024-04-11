@@ -204,7 +204,7 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
-vim.lsp.set_log_level("debug")
+-- vim.lsp.set_log_level("debug")
 
 -- [[ Install `lazy.nvim` plugin manager ]]
 --    See `:help lazy.nvim.txt` or https://github.com/folke/lazy.nvim for more info
@@ -261,51 +261,82 @@ require('lazy').setup({
     },
   },
 
-  { -- Lua-Based Github Copilot
-    "zbirenbaum/copilot.lua",
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require('copilot').setup({
-        panel = {
-          enabled = true,
-          auto_refresh = true,
-          keymap = {
-            jump_prev = "[[",
-            jump_next = "]]",
-            accept = "<CR>",
-            refresh = "gr",
-            open = "<M-\\>"
-          },
-        },
-        suggestion = {
-          keymap = {
-            accept = "<M-l>",
-            accept_word = "<C-l>",
-            accept_line = "<C-L>",
-            next = "<M-]>",
-            prev = "<M-[>",
-            dismiss = "<C-]>",
-          },
-        },
-        filetypes = {
-          ["*"] = false,
-          lua = true,
-          python = true,
-          c = true,
-          fortran = true,
-        },
-        settings = {
-          advanced = {
-            listCount = 10,
-            inlineSuggestCount = 3,
-          },
-        },
-      })
-    end,
+  -- { -- Lua-Based Github Copilot
+  --   "zbirenbaum/copilot.lua",
+  --   cmd = "Copilot",
+  --   event = "InsertEnter",
+  --   config = function()
+  --     require('copilot').setup({
+  --       panel = {
+  --         enabled = true,
+  --         auto_refresh = true,
+  --         keymap = {
+  --           jump_prev = "[[",
+  --           jump_next = "]]",
+  --           accept = "<CR>",
+  --           refresh = "gr",
+  --           open = "<M-\\>"
+  --         },
+  --       },
+  --       suggestion = {
+  --         keymap = {
+  --           accept = "<M-l>",
+  --           accept_word = "<C-l>",
+  --           accept_line = "<C-L>",
+  --           next = "<M-]>",
+  --           prev = "<M-[>",
+  --           dismiss = "<C-]>",
+  --         },
+  --       },
+  --       filetypes = {
+  --         ["*"] = false,
+  --         python = true,
+  --       },
+  --       settings = {
+  --         advanced = {
+  --           listCount = 10,
+  --           inlineSuggestCount = 3,
+  --         },
+  --       },
+  --     })
+  --   end,
+  -- },
+
+  {
+     "jackMort/ChatGPT.nvim",
+     event = "VeryLazy",
+     config = function()
+       require("chatgpt").setup()
+     end,
+     dependencies = {
+       "MunifTanjim/nui.nvim",
+       "nvim-lua/plenary.nvim",
+       "folke/trouble.nvim",
+       "nvim-telescope/telescope.nvim"
+     }
   },
 
   { "lukas-reineke/indent-blankline.nvim", main = "ibl", opts = {} },
+
+  {
+    "voldikss/vim-floaterm",
+    event = "VeryLazy",
+    keys = {
+      { "<leader>tt", "<cmd>FloatermNew<cr>", desc = "New [T]erminal" },
+      { "<leader>tk", "<cmd>FloatermKill<cr>", desc = "[K]ill Window" },
+      { "<leader>tn", "<cmd>FloatermNext<cr>", desc = "[N]ext Window" },
+      { "<leader>tp", "<cmd>FloatermPrev<cr>", desc = "[P]revious Window" },
+      { "<leader>tv", "<cmd>FloatermToggle<cr>", desc = "Toggle [V]isible" },
+    },
+  },
+
+  {
+    'windwp/nvim-autopairs',
+    event = "InsertEnter",
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
+  },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
   --
@@ -335,6 +366,23 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        ['<leader>t'] = { name = '[T]erminal', _ = 'which_key_ignore' },
+        ['<leader>g'] = {
+          name = "Chat[G]PT",
+            c = { "<cmd>ChatGPT<CR>", "[C]hatGPT" },
+            e = { "<cmd>ChatGPTEditWithInstruction<CR>", "[E]dit with instruction", mode = { "n", "v" } },
+            g = { "<cmd>ChatGPTRun grammar_correction<CR>", "[G]rammar Correction", mode = { "n", "v" } },
+            t = { "<cmd>ChatGPTRun translate<CR>", "[T]ranslate", mode = { "n", "v" } },
+            k = { "<cmd>ChatGPTRun keywords<CR>", "[K]eywords", mode = { "n", "v" } },
+            d = { "<cmd>ChatGPTRun docstring<CR>", "[D]ocstring", mode = { "n", "v" } },
+            a = { "<cmd>ChatGPTRun add_tests<CR>", "[A]dd Tests", mode = { "n", "v" } },
+            o = { "<cmd>ChatGPTRun optimize_code<CR>", "[O]ptimize Code", mode = { "n", "v" } },
+            s = { "<cmd>ChatGPTRun summarize<CR>", "[S]ummarize", mode = { "n", "v" } },
+            f = { "<cmd>ChatGPTRun fix_bugs<CR>", "[F]ix Bugs", mode = { "n", "v" } },
+            x = { "<cmd>ChatGPTRun explain_code<CR>", "E[X]plain Code", mode = { "n", "v" } },
+            r = { "<cmd>ChatGPTRun roxygen_edit<CR>", "[R]oxygen Edit", mode = { "n", "v" } },
+            l = { "<cmd>ChatGPTRun code_readability_analysis<CR>", "Code Readability Ana[L]ysis", mode = { "n", "v" } },
+          },
       }
     end,
   },
@@ -589,7 +637,19 @@ require('lazy').setup({
       local servers = {
         -- clangd = {},
         -- gopls = {},
-        -- pyright = {},
+        pyright = {
+          settings = {
+            pyright = { autoImportCompletion = true },
+            python = {
+              analysis = {
+                autoSearchPaths = true,
+                diagnosticMode = "openFilesOnly",
+                useLibraryCodeForTypes = true,
+                typeCheckingMode = "off",
+          },
+            },
+          },
+        },
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
@@ -681,7 +741,7 @@ require('lazy').setup({
       formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
+        python = { "black" },
         --
         -- You can use a sub-list to tell conform to run *until* a formatter
         -- is found.
@@ -857,7 +917,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'python', 'fortran', 'luadoc', 'markdown', 'vim', 'vimdoc' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
